@@ -28,13 +28,13 @@ bool GraphEng::init()
 
 	HRESULT res = 0;
 
-	ID3D11DeviceContext* m_imm_context;
+	//ID3D11DeviceContext* m_imm_context;
 
 	for (UINT driver_type_index = 0; driver_type_index < num_driver_types; )
 	{
 
-		res = D3D11CreateDevice(NULL, driver_types[driver_type_index], NULL, NULL, feature_levels, num_feature_levels, D3D11_SDK_VERSION,
-			&m_d3d_device, &m_feature_level, &m_imm_context);
+		res = D3D11CreateDevice(NULL, driver_types[driver_type_index], NULL, NULL, feature_levels,
+			num_feature_levels, D3D11_SDK_VERSION, &m_d3d_device, &m_feature_level, &m_imm_context);
 
 		if (SUCCEEDED(res))
 			break;
