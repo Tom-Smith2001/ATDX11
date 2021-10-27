@@ -23,23 +23,31 @@ bool SwapChain::init(HWND hwnd, UINT width, UINT height)
 	desc.SampleDesc.Quality = 0;
 	desc.Windowed = TRUE;
 
+	//Create the swap chain for the window indicated by HWND parameter
 	HRESULT hr = GraphEng::get()->m_dxgi_factory->CreateSwapChain(device, &desc, &m_swap_chain);
 
 	if (FAILED(hr))
+	{
 		return false;
+	}
 
-	//Get the back buffer color and create its render target view
+	
+	//GET THE BACK BUFFER COLOUR AND CREATE ITS RENDER TARGET VIEW
 	ID3D11Texture2D* buffer = NULL;
 	hr = m_swap_chain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&buffer);
 
 	if (FAILED(hr))
+	{
 		return false;
+	}
 
 	hr = device->CreateRenderTargetView(buffer, NULL, &m_rtv);
 	buffer->Release();
 
 	if (FAILED(hr))
+	{
 		return false;
+	}
 
 	return true;
 }
