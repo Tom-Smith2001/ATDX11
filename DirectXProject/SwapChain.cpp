@@ -23,7 +23,7 @@ bool SwapChain::init(HWND hwnd, UINT width, UINT height)
 	desc.SampleDesc.Quality = 0;
 	desc.Windowed = TRUE;
 
-	HRESULT hr = GraphEng::get()->m_dxgi_factory->CreateSwapChain(device,&desc, &m_swap_chain);
+	HRESULT hr = GraphEng::get()->m_dxgi_factory->CreateSwapChain(device, &desc, &m_swap_chain);
 
 	if (FAILED(hr))
 		return false;

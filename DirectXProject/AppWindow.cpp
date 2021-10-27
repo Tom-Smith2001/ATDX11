@@ -25,7 +25,7 @@ void AppWindow::onCreate()
 void AppWindow::onUpdate()
 {
 	Window::onUpdate();
-	GraphEng::get()->getImmediateDeviceContext()->clearRenderTargetColor(this->m_swap_chain, 0, 1, 0, 1);
+	GraphEng::get()->getImmediateDeviceContext()->clearRenderTargetColor(this->m_swap_chain, 0.2, 0.5, 1, 1);
 
 	m_swap_chain->present(true);
 }

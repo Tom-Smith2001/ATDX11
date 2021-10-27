@@ -36,7 +36,7 @@ bool GraphEng::init()
 
 		if (SUCCEEDED(res))
 			break;
-
+		
 		++driver_type_index;
 	}
 
