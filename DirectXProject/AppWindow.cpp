@@ -96,6 +96,8 @@ void AppWindow::update()
 
 	world_cam.setTranslation(new_pos);
 
+	world_cam = CheckCollisions(world_cam);
+
 	m_world_cam = world_cam;
 
 	world_cam.inverse();
@@ -119,6 +121,42 @@ void AppWindow::update()
 
 
 	m_cb->update(GraphEng::get()->getImmediateDeviceContext(), &cc);
+}
+
+Matrix4x4 AppWindow::CheckCollisions(Matrix4x4 cam) 
+{
+	int i = 0;
+	while (i < 100) 
+	{
+		if (cam.getTranslation().m_x <= cube_bounds[i].x_max && cam.getTranslation().m_x >= cube_bounds[i].x_min && cam.getTranslation().m_z <= cube_bounds[i].z_max && cam.getTranslation().m_z >= cube_bounds[i].z_min) 
+		{
+			std::cout << "Collided with cube, ";
+			if (abs(cam.getTranslation().m_x - cube_bounds[i].x_max) < abs(cam.getTranslation().m_x - cube_bounds[i].x_min) && abs(cam.getTranslation().m_x - cube_bounds[i].x_max) < abs(cam.getTranslation().m_z - cube_bounds[i].z_max) && abs(cam.getTranslation().m_x - cube_bounds[i].x_max) < abs(cam.getTranslation().m_z - cube_bounds[i].z_min)) 
+			{
+				std::cout << "closest to x_max side" << std::endl;
+				cam.setTranslation(Vector3D(cube_bounds[i].x_max + 0.02f, 0.0f, cam.getTranslation().m_z));
+			}
+			else if (abs(cam.getTranslation().m_x - cube_bounds[i].x_min) < abs(cam.getTranslation().m_x - cube_bounds[i].x_max) && abs(cam.getTranslation().m_x - cube_bounds[i].x_min) < abs(cam.getTranslation().m_z - cube_bounds[i].z_max) && abs(cam.getTranslation().m_x - cube_bounds[i].x_min) < abs(cam.getTranslation().m_z - cube_bounds[i].z_min))
+			{
+				std::cout << "closest to x_min side" << std::endl;
+				cam.setTranslation(Vector3D(cube_bounds[i].x_min - 0.02f, 0.0f, cam.getTranslation().m_z));
+			}
+			else if (abs(cam.getTranslation().m_z - cube_bounds[i].z_max) < abs(cam.getTranslation().m_z - cube_bounds[i].z_min) && abs(cam.getTranslation().m_z - cube_bounds[i].z_max) < abs(cam.getTranslation().m_x - cube_bounds[i].x_max) && abs(cam.getTranslation().m_z - cube_bounds[i].z_max) < abs(cam.getTranslation().m_x - cube_bounds[i].x_min))
+			{
+				std::cout << "closest to z_max side" << std::endl;
+				cam.setTranslation(Vector3D(cam.getTranslation().m_x, 0.0f, cube_bounds[i].z_max + 0.02f));
+			}
+			else if (abs(cam.getTranslation().m_z - cube_bounds[i].z_min) < abs(cam.getTranslation().m_z - cube_bounds[i].z_max) && abs(cam.getTranslation().m_z - cube_bounds[i].z_min) < abs(cam.getTranslation().m_x - cube_bounds[i].x_max) && abs(cam.getTranslation().m_z - cube_bounds[i].z_min) < abs(cam.getTranslation().m_x - cube_bounds[i].x_min))
+			{
+				std::cout << "closest to z_min side" << std::endl;
+				cam.setTranslation(Vector3D(cam.getTranslation().m_x, 0.0f, cube_bounds[i].z_min - 0.02f));
+			}
+			
+			//break;
+		}
+		i++;
+	}
+	return cam;
 }
 
 AppWindow::~AppWindow()
@@ -159,10 +197,12 @@ void AppWindow::onCreate()
 
 void AppWindow::BuildMap(int num)
 {
-	std::string filename = "Lvl1.txt";
+	std::cout << num << std::endl;
+	std::string filename = "";
 	if (num == 0) 
 	{
-		std::string filename = "E:\Documents\AT programming\ATDX11\DirectXProject\Lvl1.txt";
+		std::cout << num << std::endl;
+		filename = "Lvl1.txt";
 	}
 	std::ifstream input_file(filename);
 	if (!input_file.is_open()) {
@@ -192,32 +232,44 @@ void AppWindow::BuildMap(int num)
 		//std::cout << lvl_data[99 - i] << std::endl;
 		if (byte == 'X')
 		{
-			std::cout << byte << std::endl;
+			//std::cout << byte << std::endl;
 			int pos = i * 24;
-			cube_vectors[pos] = Vector3D(-0.5f, -0.5f, -0.5f) + Vector3D(i % 10, 0.0f, floor(i / 10));
+			cube_vectors[pos] = Vector3D(-0.5f, -0.5f, -0.5f) + Vector3D(0.95 * (i % 10), 0.0f, 0.95 * floor(i / 10));
 			cube_vectors[pos + 1] = Vector3D(0, 0, 0);
 			cube_vectors[pos + 2] = Vector3D(0.0f, 0.4f, 0.f);
-			cube_vectors[pos + 3] = Vector3D(-0.5f, 0.5f, -0.5f) + Vector3D(i % 10, 0.0f, floor(i / 10));
+			cube_vectors[pos + 3] = Vector3D(-0.5f, 0.5f, -0.5f) + Vector3D(0.95 * (i % 10), 0.0f, 0.95 * floor(i / 10));
 			cube_vectors[pos + 4] = Vector3D(0, 0, 0);
 			cube_vectors[pos + 5] = Vector3D(0.0f, 0.4f, 0);
-			cube_vectors[pos + 6] = Vector3D(0.5f, 0.5f, -0.5f) + Vector3D(i % 10, 0.0f, floor(i / 10));
+			cube_vectors[pos + 6] = Vector3D(0.5f, 0.5f, -0.5f) + Vector3D(0.95 * (i % 10), 0.0f, 0.95 * floor(i / 10));
 			cube_vectors[pos + 7] = Vector3D(0, 0, 0);
 			cube_vectors[pos + 8] = Vector3D(0.0f, 0.4f, 0);
-			cube_vectors[pos + 9] = Vector3D(0.5f, -0.5f, -0.5f) + Vector3D(i % 10, 0.0f, floor(i / 10));
+			cube_vectors[pos + 9] = Vector3D(0.5f, -0.5f, -0.5f) + Vector3D(0.95 * (i % 10), 0.0f, 0.95 * floor(i / 10));
 			cube_vectors[pos + 10] = Vector3D(0, 0, 0);
 			cube_vectors[pos + 11] = Vector3D(0.0f, 0.4f, 0);
-			cube_vectors[pos + 12] = Vector3D(0.5f, -0.5f, 0.5f) + Vector3D(i % 10, 0.0f, floor(i / 10));
+			cube_vectors[pos + 12] = Vector3D(0.5f, -0.5f, 0.5f) + Vector3D(0.95 * (i % 10), 0.0f, 0.95 * floor(i / 10));
 			cube_vectors[pos + 13] = Vector3D(0, 0, 0);
 			cube_vectors[pos + 14] = Vector3D(0.0f, 0.4f, 0);
-			cube_vectors[pos + 15] = Vector3D(0.5f, 0.5f, 0.5f) + Vector3D(i % 10, 0.0f, floor(i / 10));
+			cube_vectors[pos + 15] = Vector3D(0.5f, 0.5f, 0.5f) + Vector3D(0.95 * (i % 10), 0.0f, 0.95 * floor(i / 10));
 			cube_vectors[pos + 16] = Vector3D(0, 0, 0);
 			cube_vectors[pos + 17] = Vector3D(0, 0.4f, 0.0f);
-			cube_vectors[pos + 18] = Vector3D(-0.5f, 0.5f, 0.5f) + Vector3D(i % 10, 0.0f, floor(i / 10));
+			cube_vectors[pos + 18] = Vector3D(-0.5f, 0.5f, 0.5f) + Vector3D(0.95 * (i % 10), 0.0f, 0.95 * floor(i / 10));
 			cube_vectors[pos + 19] = Vector3D(0, 0, 0);
 			cube_vectors[pos + 20] = Vector3D(0, 0.4f, 0.0f);
-			cube_vectors[pos + 21] = Vector3D(-0.5f, -0.5f, 0.5f) + Vector3D(i % 10, 0.0f, floor(i / 10));
+			cube_vectors[pos + 21] = Vector3D(-0.5f, -0.5f, 0.5f) + Vector3D(0.95 * (i % 10), 0.0f, 0.95 * floor(i / 10));
 			cube_vectors[pos + 22] = Vector3D(0, 0, 0);
 			cube_vectors[pos + 23] = Vector3D(0, 0.4f, 0);
+
+			cube_bounds[i] = { static_cast<float>(-0.5f + 0.95 * (i % 10)), static_cast<float>(0.5f + 0.95 * (i % 10)), -0.5f + static_cast<float>(0.95 * floor(i / 10)), 0.5f + static_cast<float>(0.95 * floor(i / 10)) };
+			std::cout << "setting cube bounds to : " << std::endl;
+			std::cout << cube_bounds[i].x_min;
+			std::cout << -0.5f + (i % 10) << std::endl;
+			std::cout << cube_bounds[i].x_max;
+			std::cout << 0.5f + (i % 10) << std::endl;
+			std::cout << cube_bounds[i].z_min;
+			std::cout << -0.50f + static_cast<float>(floor(i / 10)) << std::endl;
+			std::cout << cube_bounds[i].z_max;
+			std::cout << 0.50f + static_cast<float>(floor(i / 10)) << std::endl;
+
 			i++;
 		
 		}
@@ -248,44 +300,73 @@ void AppWindow::BuildMap(int num)
 			cube_vectors[pos + 21] = Vector3D(0, 0, 0);
 			cube_vectors[pos + 22] = Vector3D(0, 0, 0);
 			cube_vectors[pos + 23] = Vector3D(0, 0, 0);
+
+			cube_bounds[i] = { 0, 0, 0, 0};
+			std::cout << "setting cube bounds to : ";
+			std::cout << cube_bounds[i].x_max;
+			std::cout << cube_bounds[i].x_min;
+			std::cout << cube_bounds[i].z_max;
+			std::cout << cube_bounds[i].z_min << std::endl;
+
 			i++;
 		}
 		else if (byte == 'E')
 		{
 			int pos = i * 24;
-			cube_vectors[pos] = Vector3D(-0.25f, -0.5f, -0.25f) + Vector3D(i % 10, 0.0f, floor(i / 10));
+			cube_vectors[pos] = Vector3D(-0.25f, -0.5f, -0.25f) + Vector3D(0.95 * (i % 10), 0.0f, 0.95 * floor(i / 10));
 			cube_vectors[pos + 1] = Vector3D(0, 0, 0);
 			cube_vectors[pos + 2] = Vector3D(0.4f, 0.0f, 0.0f);
-			cube_vectors[pos + 3] = Vector3D(-0.25f, 0.1f, -0.25f) + Vector3D(i % 10, 0.0f, floor(i / 10));
+			cube_vectors[pos + 3] = Vector3D(-0.25f, 0.1f, -0.25f) + Vector3D(0.95 * (i % 10), 0.0f, 0.95 * floor(i / 10));
 			cube_vectors[pos + 4] = Vector3D(0, 0, 0);
 			cube_vectors[pos + 5] = Vector3D(0.4f, 0.0f, 0.0f);
-			cube_vectors[pos + 6] = Vector3D(0.25f, 0.1f, -0.25f) + Vector3D(i % 10, 0.0f, floor(i / 10));
+			cube_vectors[pos + 6] = Vector3D(0.25f, 0.1f, -0.25f) + Vector3D(0.95 * (i % 10), 0.0f, 0.95 * floor(i / 10));
 			cube_vectors[pos + 7] = Vector3D(0, 0, 0);
 			cube_vectors[pos + 8] = Vector3D(0.4f, 0.0f, 0.0f);
-			cube_vectors[pos + 9] = Vector3D(0.25f, -0.5f, -0.25f) + Vector3D(i % 10, 0.0f, floor(i / 10));
+			cube_vectors[pos + 9] = Vector3D(0.25f, -0.5f, -0.25f) + Vector3D(0.95 * (i % 10), 0.0f, 0.95 * floor(i / 10));
 			cube_vectors[pos + 10] = Vector3D(0, 0, 0);
 			cube_vectors[pos + 11] = Vector3D(0.4f, 0.0f, 0.0f);
-			cube_vectors[pos + 12] = Vector3D(0.25f, -0.5f, 0.25f) + Vector3D(i % 10, 0.0f, floor(i / 10));
+			cube_vectors[pos + 12] = Vector3D(0.25f, -0.5f, 0.25f) + Vector3D(0.95 * (i % 10), 0.0f, 0.95 * floor(i / 10));
 			cube_vectors[pos + 13] = Vector3D(0, 0, 0);
 			cube_vectors[pos + 14] = Vector3D(0.4f, 0.0f, 0.0f);
-			cube_vectors[pos + 15] = Vector3D(0.25f, 0.1f, 0.25f) + Vector3D(i % 10, 0.0f, floor(i / 10));
+			cube_vectors[pos + 15] = Vector3D(0.25f, 0.1f, 0.25f) + Vector3D(0.95 * (i % 10), 0.0f, 0.95 * floor(i / 10));
 			cube_vectors[pos + 16] = Vector3D(0, 0, 0);
 			cube_vectors[pos + 17] = Vector3D(0.4f, 0.0f, 0.0f);
-			cube_vectors[pos + 18] = Vector3D(-0.25f, 0.1f, 0.25f) + Vector3D(i % 10, 0.0f, floor(i / 10));
+			cube_vectors[pos + 18] = Vector3D(-0.25f, 0.1f, 0.25f) + Vector3D(0.95 * (i % 10), 0.0f, 0.95 * floor(i / 10));
 			cube_vectors[pos + 19] = Vector3D(0, 0, 0);
 			cube_vectors[pos + 20] = Vector3D(0.4f, 0.0f, 0.0f);
-			cube_vectors[pos + 21] = Vector3D(-0.25f, -0.5f, 0.25f) + Vector3D(i % 10, 0.0f, floor(i / 10));
+			cube_vectors[pos + 21] = Vector3D(-0.25f, -0.5f, 0.25f) + Vector3D(0.95 * (i % 10), 0.0f, 0.95 * floor(i / 10));
 			cube_vectors[pos + 22] = Vector3D(0, 0, 0);
 			cube_vectors[pos + 23] = Vector3D(0.4f, 0.0f, 0);
+
+			cube_bounds[i] = { static_cast<float>(-0.25f + 0.95 * (i % 10)), static_cast<float>(0.25f + 0.95 * (i % 10)), -0.25f + static_cast<float>(0.95 * floor(i / 10)), 0.25f + static_cast<float>(0.95 * floor(i / 10)) };
+			std::cout << "setting cube bounds to : " << std::endl;
+			std::cout << cube_bounds[i].x_min;
+			std::cout << -0.25f + (i % 10) << std::endl;
+			std::cout << cube_bounds[i].x_max;
+			std::cout << 0.25f + (i % 10) << std::endl;
+			std::cout << cube_bounds[i].z_min;
+			std::cout << -0.25f + static_cast<float>(floor(i / 10)) << std::endl;
+			std::cout << cube_bounds[i].z_max;
+			std::cout << 0.25f + static_cast<float>(floor(i / 10)) << std::endl;
+
 			i++;
 		}
 		else if (byte == 'P')
 		{
-			m_world_cam.setTranslation(Vector3D(i % 10, 0.0f, floor(i / 10)));
+			m_world_cam.setTranslation(Vector3D(static_cast<float>(0.95f * (i % 10)), 0.0f, static_cast<float>(0.95f * (floor(i / 10)))));
+			cube_bounds[i] = { 0, 0, 0, 0};
+			std::cout << "setting cube bounds to : ";
+			std::cout << cube_bounds[i].x_max;
+			std::cout << cube_bounds[i].x_min;
+			std::cout << cube_bounds[i].z_max;
+			std::cout << cube_bounds[i].z_min << std::endl;
 			i++;
+			
 		}
 		
+		
 	}
+	/*vertex* vertex_list[800] = new vertex[800];*/
 		
 	vertex vertex_list[] = 
 	{

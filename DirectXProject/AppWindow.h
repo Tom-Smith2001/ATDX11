@@ -12,6 +12,13 @@
 #include "Matrix4x4.h"
 #include <vector>
 
+struct CubeBounds 
+{
+	float x_min, x_max, z_min, z_max;
+};
+
+
+
 class AppWindow: public Window, public InputListener
 {
 public:
@@ -23,6 +30,7 @@ public:
 	// INHERITED FROM WINDOW
 	virtual void onCreate() override;
 	void BuildMap(int num);
+	Matrix4x4 CheckCollisions(Matrix4x4 cam);
 	virtual void onUpdate() override;
 	virtual void onDestroy() override;
 	virtual void onFocus() override;
@@ -61,6 +69,9 @@ private:
 	float m_strafe = 0.0f;
 	Matrix4x4 m_world_cam;
 
-	//vertex vertex_list[];
+	CubeBounds cube_bounds[100];
+
+
+	
 };
 
