@@ -141,5 +141,11 @@
     <Text Include="Lvl1.txt">
       <Filter>App</Filter>
     </Text>
+    <Text Include="Lvl2.txt">
+      <Filter>App</Filter>
+    </Text>
+    <Text Include="Lvl3.txt">
+      <Filter>App</Filter>
+    </Text>
   </ItemGroup>
 </Project>

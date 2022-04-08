@@ -15,6 +15,8 @@
 struct CubeBounds 
 {
 	float x_min, x_max, z_min, z_max;
+	bool enemy;
+	bool alive;
 };
 
 
@@ -30,7 +32,9 @@ public:
 	// INHERITED FROM WINDOW
 	virtual void onCreate() override;
 	void BuildMap(int num);
-	Matrix4x4 CheckCollisions(Matrix4x4 cam);
+	void UpdateMap(int num, int enemy_killed);
+	Matrix4x4 CheckCamCollisions(Matrix4x4 cam);
+	bool CheckShot();
 	virtual void onUpdate() override;
 	virtual void onDestroy() override;
 	virtual void onFocus() override;
@@ -63,6 +67,9 @@ private:
 	float m_rot_x = 0;
 	float m_rot_y = 0;
 
+	bool fired = false;
+	int enemies = 0;
+	int level = 0;
 
 	float m_scale_cube = 1;
 	float m_forward = 0.0f;
