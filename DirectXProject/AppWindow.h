@@ -10,6 +10,7 @@
 #include "PixelShader.h"
 #include "InputListener.h"
 #include "Matrix4x4.h"
+#include <vector>
 
 class AppWindow: public Window, public InputListener
 {
@@ -21,6 +22,7 @@ public:
 
 	// INHERITED FROM WINDOW
 	virtual void onCreate() override;
+	void BuildMap(int num);
 	virtual void onUpdate() override;
 	virtual void onDestroy() override;
 	virtual void onFocus() override;
@@ -58,5 +60,7 @@ private:
 	float m_forward = 0.0f;
 	float m_strafe = 0.0f;
 	Matrix4x4 m_world_cam;
+
+	//vertex vertex_list[];
 };
 

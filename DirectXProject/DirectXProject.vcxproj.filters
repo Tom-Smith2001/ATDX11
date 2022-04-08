@@ -137,4 +137,9 @@
       <Filter>App</Filter>
     </FxCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Lvl1.txt">
+      <Filter>App</Filter>
+    </Text>
+  </ItemGroup>
 </Project>
