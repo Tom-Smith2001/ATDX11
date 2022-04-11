@@ -7,13 +7,9 @@
 #include "InputSystem.h"
 #include "math.h"
 #include <iostream>
+#include <algorithm>
 
 
-
-//struct vec3
-//{
-//	float x, y, z;
-//};
 
 struct vertex
 {
@@ -47,31 +43,21 @@ void AppWindow::update()
 	if (m_delta_pos > 1.0f)
 		m_delta_pos = 0;
 
+	if (m_rot_x > 1.5)
+	{
+		std::cout << m_rot_x << std::endl;
+		m_rot_x = 1.5;
+	}
+	if (m_rot_x < -1.5)
+	{
+		std::cout << m_rot_x << std::endl;
+		m_rot_x = -1.5;
+	}
 
 	Matrix4x4 temp;
 
 	m_delta_scale += m_delta_time / 0.55f;
 
-	/*cc.m_world.setScale(Vector3D::lerp(Vector3D(0.5, 0.5, 0), Vector3D(1.0f, 1.0f, 0), (sin(m_delta_scale) + 1.0f) / 2.0f));
-
-	temp.setTranslation(Vector3D::lerp(Vector3D(-1.5f, -1.5f, 0), Vector3D(1.5f, 1.5f, 0), m_delta_pos));
-
-	cc.m_world *= temp;*/
-
-
-	/*cc.m_world.setScale(Vector3D(m_scale_cube, m_scale_cube, m_scale_cube));
-
-	temp.setIdentity();
-	temp.setRotationZ(0.0f);
-	cc.m_world *= temp;
-
-	temp.setIdentity();
-	temp.setRotationY(m_rot_y);
-	cc.m_world *= temp;
-
-	temp.setIdentity();
-	temp.setRotationX(m_rot_x);
-	cc.m_world *= temp;*/
 
 	cc.m_world.setIdentity();
 
@@ -118,13 +104,6 @@ void AppWindow::update()
 
 
 	cc.m_view = world_cam;
-	/*cc.m_proj.setOrthoLH
-	(
-		(this->getClientWindowRect().right - this->getClientWindowRect().left) / 300.0f,
-		(this->getClientWindowRect().bottom - this->getClientWindowRect().top) / 300.0f,
-		-4.0f,
-		4.0f
-	); */
 
 	int width = this->getClientWindowRect().right - this->getClientWindowRect().left;
 
@@ -165,7 +144,6 @@ Matrix4x4 AppWindow::CheckCamCollisions(Matrix4x4 cam)
 				cam.setTranslation(Vector3D(cam.getTranslation().m_x, 0.0f, cube_bounds[i].z_min - 0.02f));
 			}
 			
-			//break;
 		}
 		i++;
 	}
@@ -236,9 +214,7 @@ void AppWindow::onCreate()
 	m_world_cam.setTranslation(Vector3D(0, 0, -2));
 
 	
-	BuildMap(0);
-	//BuildMap(1);
-	//BuildMap(2);
+	BuildMap(level);
 
 	constant cc;
 	cc.m_time = 0;
@@ -273,26 +249,14 @@ void AppWindow::BuildMap(int num)
 	char lvl_data[100];
 	char byte = 0;
 	int x = 0;
-	/*while (input_file.get(byte))
-	{
-		if (byte == 'X' || byte == 'E' || byte == ' ' || byte == 'P') 
-		{
-			lvl_data[x] = byte;
-			std::cout << byte;
-			std::cout << lvl_data[99 - x] << std::endl;
-			x++;		
-		}
-		
-	}*/
 
 	Vector3D cube_vectors[2400];
 	int i = 0;
 	while (input_file.get(byte) && i < 100)
 	{
-		//std::cout << lvl_data[99 - i] << std::endl;
+		
 		if (byte == 'X')
 		{
-			//std::cout << byte << std::endl;
 			int pos = i * 24;
 			cube_vectors[pos] = Vector3D(-0.5f, -0.5f, -0.5f) + Vector3D(0.95 * (i % 10), 0.0f, 0.95 * floor(i / 10));
 			cube_vectors[pos + 1] = Vector3D(0, 0, 0);
@@ -403,7 +367,6 @@ void AppWindow::BuildMap(int num)
 		
 		
 	}
-	/*vertex* vertex_list[800] = new vertex[800];*/
 		
 	vertex vertex_list[] = 
 	{
@@ -1207,62 +1170,6 @@ void AppWindow::BuildMap(int num)
 		{ cube_vectors[2391], cube_vectors[2392], cube_vectors[2393] },
 		{ cube_vectors[2394], cube_vectors[2395], cube_vectors[2396] },
 		{ cube_vectors[2397], cube_vectors[2398], cube_vectors[2399] }
-		////X - Y - Z
-		////FRONT FACE
-		//{ Vector3D(-0.5f,-0.5f,-0.5f) + Vector3D(num, 0.0f, 0.0f),
-		//     Vector3D(1,0,0), 
-		//  Vector3D(0.2f,0,0) },
-		//{ Vector3D(-0.5f,0.5f,-0.5f) + Vector3D(num, 0.0f, 0.0f),
-		//     Vector3D(1,1,0), Vector3D(0.2f,0.2f,0) },
-		//{ Vector3D(0.5f,0.5f,-0.5f) + Vector3D(num, 0.0f, 0.0f),  
-		//  Vector3D(1,1,0),
-		//   Vector3D(0.2f,0.2f,0) },
-		//{ Vector3D(0.5f,-0.5f,-0.5f) + Vector3D(num, 0.0f, 0.0f), 
-		//Vector3D(1,0,0), 
-		//Vector3D(0.2f,0,0) },
-
-		////BACK FACE
-		//{ Vector3D(0.5f,-0.5f,0.5f) + Vector3D(num, 0.0f, 0.0f),
-		//     Vector3D(0,1,0), 
-		// Vector3D(0,0.2f,0) },
-		//{ Vector3D(0.5f,0.5f,0.5f) + Vector3D(num, 0.0f, 0.0f),   
-		//  Vector3D(0,1,1), 
-		// Vector3D(0,0.2f,0.2f) },
-		//{ Vector3D(-0.5f,0.5f,0.5f) + Vector3D(num, 0.0f, 0.0f),  
-		//  Vector3D(0,1,1), 
-		//  Vector3D(0,0.2f,0.2f) },
-		//{ Vector3D(-0.5f,-0.5f,0.5f) + Vector3D(num, 0.0f, 0.0f),    
-		//  Vector3D(0,1,0),
-		//Vector3D(0,0.2f,0) },
-
-		//X - Y - Z
-		//FRONT FACE
-		//{ Vector3D(-0.5f,-0.5f,-0.5f) + Vector3D(1, 0.0f, 0.0f), 
-		//    Vector3D(1,0,0), 
-		//  Vector3D(0.2f,0,0) },
-		//{ Vector3D(-0.5f,0.5f,-0.5f) + Vector3D(1, 0.0f, 0.0f), 
-		//    Vector3D(1,1,0),
-		//  Vector3D(0.2f,0.2f,0) },
-		//{ Vector3D(0.5f,0.5f,-0.5f) + Vector3D(1, 0.0f, 0.0f), 
-		//   Vector3D(1,1,0), 
-		//  Vector3D(0.2f,0.2f,0) },
-		//{ Vector3D(0.5f,-0.5f,-0.5f) + Vector3D(1, 0.0f, 0.0f),
-		//Vector3D(1,0,0),
-		//Vector3D(0.2f,0,0) },
-
-		//////BACK FACE
-		//{ Vector3D(0.5f,-0.5f,0.5f) + Vector3D(1, 0.0f, 0.0f),  
-		//   Vector3D(0,1,0), 
-		// Vector3D(0,0.2f,0) },
-		//{ Vector3D(0.5f,0.5f,0.5f) + Vector3D(1, 0.0f, 0.0f),   
-		//  Vector3D(0,1,1), 
-		// Vector3D(0,0.2f,0.2f) },
-		//{ Vector3D(-0.5f,0.5f,0.5f) + Vector3D(1, 0.0f, 0.0f),  
-		//  Vector3D(0,1,1),  
-		// Vector3D(0,0.2f,0.2f) },
-		//{ Vector3D(-0.5f,-0.5f,0.5f) + Vector3D(1, 0.0f, 0.0f), 
-		//     Vector3D(0,1,0),
-		//Vector3D(0,0.2f,0) }
 		
 
 	};
@@ -1277,46 +1184,9 @@ void AppWindow::BuildMap(int num)
 	m_vb = GraphEng::get()->createVertexBuffer();
 	UINT size_list = ARRAYSIZE(vertex_list);
 
-	//GraphEng::get()->createShaders();
-
 	unsigned int index_list[] =
 	{
-		////FRONT SIDE
-		//0,1,2,  //FIRST TRIANGLE
-		//2,3,0,  //SECOND TRIANGLE
-		//		//BACK SIDE
-		//		4,5,6,
-		//		6,7,4,
-		//		//TOP SIDE
-		//		1,6,5,
-		//		5,2,1,
-		//		//BOTTOM SIDE
-		//		7,0,3,
-		//		3,4,7,
-		//		//RIGHT SIDE
-		//		3,2,5,
-		//		5,4,3,
-		//		//LEFT SIDE
-		//		7,6,1,
-		//		1,0,7,
-				//FRONT SIDE
-		//8,9,10,  //FIRST TRIANGLE
-		//10,11,8,  //SECOND TRIANGLE
-		//		//BACK SIDE
-		//		12,13,14,
-		//		14,15,12,
-		//		//TOP SIDE
-		//		9,14,13,
-		//		13,10,9,
-		//		//BOTTOM SIDE
-		//		15,8,11,
-		//		11,12,15,
-		//		//RIGHT SIDE
-		//		11,10,13,
-		//		13,12,11,
-		//		//LEFT SIDE
-		//		15,14,9,
-		//		9,8,15
+		
 		0,1,2,2,3,0,4,5,6,6,7,4,1,6,5,5,2,1,7,0,3,3,4,7,3,2,5,5,4,3,7,6,1,1,0,7,
 		8,9,10,10,11,8,12,13,14,14,15,12,9,14,13,13,10,9,15,8,11,11,12,15,11,10,13,13,12,11,15,14,9,9,8,15,
 		16,17,18,18,19,16,20,21,22,22,23,20,17,22,21,21,18,17,23,16,19,19,20,23,19,18,21,21,20,19,23,22,17,17,16,23,
@@ -1469,26 +1339,14 @@ void AppWindow::UpdateMap(int num, int enemy_killed)
 	char lvl_data[100];
 	char byte = 0;
 	int x = 0;
-	/*while (input_file.get(byte))
-	{
-		if (byte == 'X' || byte == 'E' || byte == ' ' || byte == 'P')
-		{
-			lvl_data[x] = byte;
-			std::cout << byte;
-			std::cout << lvl_data[99 - x] << std::endl;
-			x++;
-		}
-
-	}*/
+	
 
 	Vector3D cube_vectors[2400];
 	int i = 0;
 	while (input_file.get(byte) && i < 100)
 	{
-		//std::cout << lvl_data[99 - i] << std::endl;
 		if (byte == 'X')
 		{
-			//std::cout << byte << std::endl;
 			int pos = i * 24;
 			cube_vectors[pos] = Vector3D(-0.5f, -0.5f, -0.5f) + Vector3D(0.95 * (i % 10), 0.0f, 0.95 * floor(i / 10));
 			cube_vectors[pos + 1] = Vector3D(0, 0, 0);
@@ -1591,7 +1449,6 @@ void AppWindow::UpdateMap(int num, int enemy_killed)
 		}
 		else if (byte == 'P')
 		{
-			//m_world_cam.setTranslation(Vector3D(static_cast<float>(0.95f * (i % 10)), 0.0f, static_cast<float>(0.95f * (floor(i / 10)))));
 			cube_bounds[i] = { 0, 0, 0, 0, false };
 			
 			i++;
@@ -1631,7 +1488,7 @@ void AppWindow::UpdateMap(int num, int enemy_killed)
 	cube_bounds[enemy_killed] = { 0, 0, 0, 0, true, false };
 
 
-	/*vertex* vertex_list[800] = new vertex[800];*/
+	
 
 	vertex vertex_list[] =
 	{
@@ -2435,63 +2292,6 @@ void AppWindow::UpdateMap(int num, int enemy_killed)
 		{ cube_vectors[2391], cube_vectors[2392], cube_vectors[2393] },
 		{ cube_vectors[2394], cube_vectors[2395], cube_vectors[2396] },
 		{ cube_vectors[2397], cube_vectors[2398], cube_vectors[2399] }
-		////X - Y - Z
-		////FRONT FACE
-		//{ Vector3D(-0.5f,-0.5f,-0.5f) + Vector3D(num, 0.0f, 0.0f),
-		//     Vector3D(1,0,0), 
-		//  Vector3D(0.2f,0,0) },
-		//{ Vector3D(-0.5f,0.5f,-0.5f) + Vector3D(num, 0.0f, 0.0f),
-		//     Vector3D(1,1,0), Vector3D(0.2f,0.2f,0) },
-		//{ Vector3D(0.5f,0.5f,-0.5f) + Vector3D(num, 0.0f, 0.0f),  
-		//  Vector3D(1,1,0),
-		//   Vector3D(0.2f,0.2f,0) },
-		//{ Vector3D(0.5f,-0.5f,-0.5f) + Vector3D(num, 0.0f, 0.0f), 
-		//Vector3D(1,0,0), 
-		//Vector3D(0.2f,0,0) },
-
-		////BACK FACE
-		//{ Vector3D(0.5f,-0.5f,0.5f) + Vector3D(num, 0.0f, 0.0f),
-		//     Vector3D(0,1,0), 
-		// Vector3D(0,0.2f,0) },
-		//{ Vector3D(0.5f,0.5f,0.5f) + Vector3D(num, 0.0f, 0.0f),   
-		//  Vector3D(0,1,1), 
-		// Vector3D(0,0.2f,0.2f) },
-		//{ Vector3D(-0.5f,0.5f,0.5f) + Vector3D(num, 0.0f, 0.0f),  
-		//  Vector3D(0,1,1), 
-		//  Vector3D(0,0.2f,0.2f) },
-		//{ Vector3D(-0.5f,-0.5f,0.5f) + Vector3D(num, 0.0f, 0.0f),    
-		//  Vector3D(0,1,0),
-		//Vector3D(0,0.2f,0) },
-
-		//X - Y - Z
-		//FRONT FACE
-		//{ Vector3D(-0.5f,-0.5f,-0.5f) + Vector3D(1, 0.0f, 0.0f), 
-		//    Vector3D(1,0,0), 
-		//  Vector3D(0.2f,0,0) },
-		//{ Vector3D(-0.5f,0.5f,-0.5f) + Vector3D(1, 0.0f, 0.0f), 
-		//    Vector3D(1,1,0),
-		//  Vector3D(0.2f,0.2f,0) },
-		//{ Vector3D(0.5f,0.5f,-0.5f) + Vector3D(1, 0.0f, 0.0f), 
-		//   Vector3D(1,1,0), 
-		//  Vector3D(0.2f,0.2f,0) },
-		//{ Vector3D(0.5f,-0.5f,-0.5f) + Vector3D(1, 0.0f, 0.0f),
-		//Vector3D(1,0,0),
-		//Vector3D(0.2f,0,0) },
-
-		//////BACK FACE
-		//{ Vector3D(0.5f,-0.5f,0.5f) + Vector3D(1, 0.0f, 0.0f),  
-		//   Vector3D(0,1,0), 
-		// Vector3D(0,0.2f,0) },
-		//{ Vector3D(0.5f,0.5f,0.5f) + Vector3D(1, 0.0f, 0.0f),   
-		//  Vector3D(0,1,1), 
-		// Vector3D(0,0.2f,0.2f) },
-		//{ Vector3D(-0.5f,0.5f,0.5f) + Vector3D(1, 0.0f, 0.0f),  
-		//  Vector3D(0,1,1),  
-		// Vector3D(0,0.2f,0.2f) },
-		//{ Vector3D(-0.5f,-0.5f,0.5f) + Vector3D(1, 0.0f, 0.0f), 
-		//     Vector3D(0,1,0),
-		//Vector3D(0,0.2f,0) }
-
 
 	};
 
@@ -2505,46 +2305,10 @@ void AppWindow::UpdateMap(int num, int enemy_killed)
 	m_vb = GraphEng::get()->createVertexBuffer();
 	UINT size_list = ARRAYSIZE(vertex_list);
 
-	//GraphEng::get()->createShaders();
 
 	unsigned int index_list[] =
 	{
-		////FRONT SIDE
-		//0,1,2,  //FIRST TRIANGLE
-		//2,3,0,  //SECOND TRIANGLE
-		//		//BACK SIDE
-		//		4,5,6,
-		//		6,7,4,
-		//		//TOP SIDE
-		//		1,6,5,
-		//		5,2,1,
-		//		//BOTTOM SIDE
-		//		7,0,3,
-		//		3,4,7,
-		//		//RIGHT SIDE
-		//		3,2,5,
-		//		5,4,3,
-		//		//LEFT SIDE
-		//		7,6,1,
-		//		1,0,7,
-				//FRONT SIDE
-		//8,9,10,  //FIRST TRIANGLE
-		//10,11,8,  //SECOND TRIANGLE
-		//		//BACK SIDE
-		//		12,13,14,
-		//		14,15,12,
-		//		//TOP SIDE
-		//		9,14,13,
-		//		13,10,9,
-		//		//BOTTOM SIDE
-		//		15,8,11,
-		//		11,12,15,
-		//		//RIGHT SIDE
-		//		11,10,13,
-		//		13,12,11,
-		//		//LEFT SIDE
-		//		15,14,9,
-		//		9,8,15
+		
 		0,1,2,2,3,0,4,5,6,6,7,4,1,6,5,5,2,1,7,0,3,3,4,7,3,2,5,5,4,3,7,6,1,1,0,7,
 		8,9,10,10,11,8,12,13,14,14,15,12,9,14,13,13,10,9,15,8,11,11,12,15,11,10,13,13,12,11,15,14,9,9,8,15,
 		16,17,18,18,19,16,20,21,22,22,23,20,17,22,21,21,18,17,23,16,19,19,20,23,19,18,21,21,20,19,23,22,17,17,16,23,
@@ -2680,22 +2444,9 @@ void AppWindow::onUpdate()
 
 	RECT rc = this->getClientWindowRect();
 	GraphEng::get()->getImmediateDeviceContext()->setViewPortSize(rc.right - rc.left, rc.bottom - rc.top);
-	//GraphEng::get()->setShaders();
 	
 
 	update();
-
-	//unsigned long new_time = 0;
-	//if (m_old_time)
-	//	new_time = ::GetTickCount() - m_old_time;
-	//m_delta_time = new_time / 1000.0f;
-	//m_old_time = ::GetTickCount();
-
-	//m_angle += 1.57f * m_delta_time;
-	//constant cc;
-	//cc.m_angle = m_angle;
-
-	//m_cb->update(GraphEng::get()->getImmediateDeviceContext(), &cc);
 
 	GraphEng::get()->getImmediateDeviceContext()->setConstantBuffer(m_vs, m_cb);
 	GraphEng::get()->getImmediateDeviceContext()->setConstantBuffer(m_ps, m_cb);
@@ -2743,22 +2494,18 @@ void AppWindow::onKeyDown(int key)
 {
 	if (key == 'W') 
 	{
-		//m_rot_x += 3.14f * m_delta_time;
 		m_forward = 1.0f;
 	}
 	if (key == 'S')
 	{
-		//m_rot_x -= 3.14f * m_delta_time;
 		m_forward = -1.0f;
 	}
 	if (key == 'A')
 	{
-		//m_rot_y += 3.14f * m_delta_time;
 		m_strafe = -1.0f;
 	}
 	if (key == 'D')
 	{
-		//m_rot_y -= 3.14f * m_delta_time;
 		m_strafe = 1.0f;
 	}
 	if (key == 'X') 
@@ -2782,7 +2529,7 @@ void AppWindow::onMouseMove(const Point& mouse_pos)
 
 	m_rot_x += (mouse_pos.m_y - (height / 2.0f)) * m_delta_time * 0.1f;
 	m_rot_y += (mouse_pos.m_x - (width / 2.0f)) * m_delta_time * 0.1f;
-
+	
 
 	InputSystem::get()->setCursorPosition(Point(width / 2.0f, height / 2.0f));
 

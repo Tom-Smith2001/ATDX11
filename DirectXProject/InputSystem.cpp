@@ -24,7 +24,7 @@ void InputSystem::update()
 
 	if (current_mouse_pos.x != m_old_mouse_pos.m_x || current_mouse_pos.y != m_old_mouse_pos.m_y)
 	{
-		//THERE IS MOUSE MOVE EVENT
+		
 		std::unordered_set<InputListener*>::iterator it = m_set_listeners.begin();
 
 		while (it != m_set_listeners.end())
@@ -41,7 +41,6 @@ void InputSystem::update()
 	{
 		for (unsigned int i = 0; i < 256; i++)
 		{
-			// KEY IS DOWN
 			if (m_keys_state[i] & 0x80)
 			{
 				std::unordered_set<InputListener*>::iterator it = m_set_listeners.begin();
@@ -64,7 +63,7 @@ void InputSystem::update()
 					++it;
 				}
 			}
-			else // KEY IS UP
+			else
 			{
 				if (m_keys_state[i] != m_old_keys_state[i])
 				{
@@ -86,7 +85,6 @@ void InputSystem::update()
 			}
 
 		}
-		// store current keys state to old keys state buffer
 		::memcpy(m_old_keys_state, m_keys_state, sizeof(unsigned char) * 256);
 	}
 }

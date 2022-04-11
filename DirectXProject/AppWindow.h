@@ -29,7 +29,6 @@ public:
 
 	void update();
 
-	// INHERITED FROM WINDOW
 	virtual void onCreate() override;
 	void BuildMap(int num);
 	void UpdateMap(int num, int enemy_killed);

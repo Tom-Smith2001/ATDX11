@@ -32,7 +32,6 @@ bool GraphEng::init()
 
 	HRESULT res = 0;
 
-	//ID3D11DeviceContext* m_imm_context;
 
 	for (UINT driver_type_index = 0; driver_type_index < num_driver_types; )
 	{
@@ -175,17 +174,4 @@ void GraphEng::releaseCompiledShader()
 	if (m_blob) m_blob->Release();
 }
 
-//bool GraphEng::createShaders()
-//{
-//	ID3DBlob* errblob = nullptr;
-//	D3DCompileFromFile(L"shader.fx", nullptr, nullptr, "psmain", "ps_5_0", NULL, NULL, &m_psblob, &errblob);
-//	m_d3d_device->CreatePixelShader(m_psblob->GetBufferPointer(), m_psblob->GetBufferSize(), nullptr, &m_ps);
-//	return true;
-//}
-
-//bool GraphEng::setShaders()
-//{
-//	m_imm_context->PSSetShader(m_ps, nullptr, 0);
-//	return true;
-//}
 
