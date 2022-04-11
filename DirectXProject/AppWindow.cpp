@@ -251,21 +251,17 @@ void AppWindow::onCreate()
 
 void AppWindow::BuildMap(int num)
 {
-	std::cout << enemies << std::endl;
 	std::string filename = "";
 	if (num == 0) 
 	{
-		std::cout << num << std::endl;
 		filename = "Lvl1.txt";
 	}
 	if (num == 1)
 	{
-		std::cout << num << std::endl;
 		filename = "Lvl2.txt";
 	}
 	if (num == 2)
 	{
-		std::cout << num << std::endl;
 		filename = "Lvl3.txt";
 	}
 	std::ifstream input_file(filename);
